@@ -22,7 +22,7 @@ public class FunctionRealizer implements IFunctions {
         return s.length() <= 17 && s.length() != 0;
     }
 
-    public int processString(String s) {
+    public void processString(String s) {
         if (s.equals("--h")) {
             String info = "Программа принимает на вход любую последовательность символов длинной до 17 знаков, что-то делает и продолжает работать, если только на вход на подана строка “q”. В последнем случае – программа завершается\n" +
                     "Если длина более 17 знаков – в консоль пишется сообщение, говорящее, что ввод слишком длинный и программа продолжает ожидать следующего ввода\n" +
@@ -31,6 +31,7 @@ public class FunctionRealizer implements IFunctions {
                     "Если в начале строки подали два числа, разделенных пробелом (например, “10 34agagaga”), то программа опускает все нечисловые знаки и делит первое число на второе число и выводит результат с точностью до трех знаков после запятой.\n" +
                     "Если на вход подана строка, то программа сортирует символы в строке в лексикографическом порядке (в порядке кодировки юникод) и вводит отсортированную строку и число уникальных символов в строке.\n";
             System.out.println(info);
+            return;
         }
         if (isDigit(s.charAt(0)) || (s.length() >= 2 && s.charAt(0) == '-' && isDigit(s.charAt(1)))) {
             int[] endIdx = {0};//Индекс последней цифры числа
@@ -47,6 +48,7 @@ public class FunctionRealizer implements IFunctions {
                 System.out.printf("%.3f\n",sqr);
                 double sqrt3 = Math.pow(sqr, (double) 1 / 3);
                 System.out.printf("Кубический корень из квадрата : %.3f\n", sqrt3);
+                return;
             } else {
                 double num2 = getNum(s,endIdx[0] + 2,endIdx);
                 if (!Double.isNaN(num1 / num2) && !Double.isInfinite(num1 / num2)) {
@@ -56,14 +58,15 @@ public class FunctionRealizer implements IFunctions {
                 } else {
                     System.out.println("Деление невозможно");
                 }
+                return;
             }
 
         }
         String res = sort(s);
         System.out.println("Результат сортировки :");
         System.out.println(res);
-        System.out.println(("Количество уникальных символов: " + getNumOfUniqSymb(res)));
-        return 1;
+        System.out.println(("Количество уникальных символов: " + getNumOfUniqSym(res)));
+        return;
     }
 
     public boolean isDigit(char c) {
@@ -84,7 +87,7 @@ public class FunctionRealizer implements IFunctions {
         String res = build.toString();
         return res;
     }
-    public int getNumOfUniqSymb(String s){
+    public int getNumOfUniqSym(String s){
         int k = 1;
         for(int i = 1;i < s.length();i++){
             if(s.charAt(i) != s.charAt(i - 1)){
