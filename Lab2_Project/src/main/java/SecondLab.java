@@ -6,24 +6,30 @@ import java.util.*;
 public class SecondLab {
     public static void main(String args[]){
         Scanner scan = new Scanner(System.in);
-
-        String msgs[] = { "0.Выход","1.Обработать объекты учитель и ученик с помощью PeopleDAO" };
-	    String peopleDaoMsgs[] = {"0.Перейти к другой опции","1.Создать персону","2.Обновить персону","3.Удалить персону","4.Найти персону"};
-        String peopleDaoFuncNames[] = {"quit","createPerson","update","deletePerson","find"};
-        Class[] classes = {PeopleDAO.class};
+        File folder;
+        do {
+            System.out.println("Укажите путь для папки:");
+            String path = FunctionHelper.readLine(scan);
+            if(path == null){
+                System.out.println("Завершение работы");
+                return;
+            }
+            folder = new File(path);
+            if(!folder.exists() || (folder.exists() && !folder.isDirectory())){
+                System.out.println("Это не папка или такой папки нет");
+            }
+        }while(!folder.exists() || (folder.exists() && !folder.isDirectory()));
+        String msgs[] = { "0.Выход","1.Обработать объекты учитель и ученик с помощью PeopleDAO","2.Обработать объекты учитель и ученик с помощью CashedPeopleDAO" };
+	    String DaoMsgs[] = {"0.Перейти к другой опции","1.Создать персону","2.Обновить персону","3.Удалить персону","4.Найти персону"};
+        String DaoFuncNames[] = {"quit","createPerson","update","deletePerson","find"};
+        Class[] classes = {PeopleDAO.class,CashedPeopleDAO.class};
         String methodsNames[][] = new String[classes.length][];
         String classMsgs[][] = new String[classes.length][];
 
-        classMsgs[0] = peopleDaoMsgs;
-        methodsNames[0] = peopleDaoFuncNames;
-
-        /*HashMap<Subject,Integer> subjects = new HashMap<Subject,Integer>();
-        subjects.put(Subject.DIFFEQS,0);
-        subjects.put(Subject.ENGLISH,1);
-        Student s = new Student("Ivanov","Ivan","Ivanich",6564664,2020,subjects);
-        ArrayList<Student> students = new ArrayList<>();
-        students.add(s);
-        ArrayList<Teacher> teachers = new ArrayList<>();*/
+        classMsgs[0] = DaoMsgs;
+        classMsgs[1] = DaoMsgs;
+        methodsNames[0] = DaoFuncNames;
+        methodsNames[1] = DaoFuncNames;
 	     int rc;
 	     do {
              rc = FunctionHelper.dialog(msgs,msgs.length,scan);
@@ -33,7 +39,7 @@ public class SecondLab {
                                  methodsNames[rc - 1][
                                          FunctionHelper.dialog(classMsgs[rc - 1],classMsgs[rc - 1].length,scan)],
                                  null).
-                         invoke(classes[rc - 1].getConstructor(Scanner.class).newInstance(scan),null)));
+                         invoke(classes[rc - 1].getConstructor(Scanner.class,File.class).newInstance(scan,folder),null)));
 
              } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
                  e.printStackTrace();
@@ -42,20 +48,5 @@ public class SecondLab {
              }
 	     } while (rc != 0);
          scan.close();
-
-        /*FunctionHelper functionHelper = new FunctionHelper();
-        File file;
-        do {
-            String s = functionHelper.readLine(new Scanner(System.in));
-            if(s == null){
-                System.out.println("Ошибка чтения.Завершение работы программы");
-                return;
-            }
-            file = new File(s);
-            if(!file.exists()){
-                System.out.println("Такого файла или каталога не существует");
-            }
-        } while(!file.exists());*/
-
     }
 }

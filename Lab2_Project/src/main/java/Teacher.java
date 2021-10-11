@@ -18,9 +18,11 @@ public class Teacher extends Person{
     private int timeStart;
     private int timeFinish;
    @JsonCreator
-   public Teacher(@JsonProperty("surname") String surname,@JsonProperty("name") String name,@JsonProperty("patronymic") String patronymic,
+   public Teacher(@JsonProperty("surname") String surname,@JsonProperty("name") String name,
+                  @JsonProperty("patronymic") String patronymic,
                   @JsonProperty("telNumber") int telNumber,@JsonProperty("birthYear") int birthYear,
-                  @JsonProperty("subject") Subject subject,@JsonProperty("timeStart") int timeStart,@JsonProperty("timeFinish") int timeFinish){
+                  @JsonProperty("subject") Subject subject,@JsonProperty("timeStart") int timeStart,
+                  @JsonProperty("timeFinish") int timeFinish){
        this.subject = subject;
        this.birthYear = birthYear;
        this.timeStart = timeStart;

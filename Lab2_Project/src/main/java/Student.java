@@ -104,4 +104,10 @@ protected HashMap<Subject,Integer> marks = new HashMap<>();
             return "";
         }*/
     }
+    public void removeSubject(String subject) throws Subject.SubjectException {
+     marks.remove(Subject.value(subject));
+    }
+    public boolean containsSubject(String subject) throws Subject.SubjectException {
+    return marks.containsKey(Subject.value(subject));
+    }
 }

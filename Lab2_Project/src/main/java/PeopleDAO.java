@@ -11,8 +11,8 @@ import java.util.Scanner;
 public class PeopleDAO implements Dao {
     private final File folder;
     private final Scanner scan;
-    public PeopleDAO(Scanner scn){
-       folder = new File("C:\\Users\\devsy\\IdeaProjects\\Lab2_Project\\Persons");
+    public PeopleDAO(Scanner scn,File fldr){
+       folder = fldr;
        scan = scn;
     }
     public  boolean quit(){
@@ -32,113 +32,12 @@ public class PeopleDAO implements Dao {
         return false;
     }
 
-    /*public  boolean ObjectsToFile(ArrayList<Student> students,ArrayList<Teacher> teachers){
-        if( students.size() == 0 && teachers.size() == 0){
-            System.out.println("Нечего записывать");
-            return false;
-        }
-        System.out.println("Введите имя файла");
-        //Scanner scan = new Scanner(System.in);
-        String s = FunctionHelper.readLine(scan);
-        System.out.println(s);
-        //scan.close();
-        if(s == null){
-            System.out.println("Ошибка ввода");
-            return false;
-        }
-
-        //File file = new File(s);
-        if(hasFile(s)){
-            File file = new File(folder.getPath() + "\\" + s);
-           try{
-               FileWriter writer = new FileWriter(file);
-               BufferedWriter wr = new BufferedWriter(writer);
-               int ts =  teachers.size();
-               int ss =  students.size();
-               wr.write(ts);
-               wr.newLine();
-               wr.write(ss);
-               wr.newLine();
-               wr.close();
-               writer.close();
-               for(Teacher t : teachers){
-                   t.writeToFile(file);
-               }
-               for(Student st : students){
-                   st.writeToFile(file);
-               }
-
-           } catch (IOException e){
-               System.out.println("Ошибка записи в файл");
-               return false;
-           }
-        } else {
-            System.out.println("Это не файл или файла в папке нет");
-        }
-        return true;
-    }
-*/
-    public  boolean FileToObjects(ArrayList<Student> students,ArrayList<Teacher> teachers){
-        System.out.println("Введите имя файла");
-        String name = FunctionHelper.readLine(scan);
-        System.out.println(name);
-        if(name == null){
-            System.out.println("Ошибка ввода");
-            return false;
-        }
-        if(hasFile(name)){
-            try{
-               // FileReader reader = new FileReader(new File(folder.getPath() + "\\" + s));
-                BufferedReader buffer = new BufferedReader(new FileReader(folder.getPath() + "\\" + name));
-                int ts = Integer.parseInt(buffer.readLine());
-                int ss = Integer.parseInt(buffer.readLine());
-                if(ts < 0 || ss < 0){
-                    System.out.println("Ошибка чтения из файла: отрицательное количество персон");
-                    return false;
-                }
-                students.clear();
-                teachers.clear();
-                for(int i = 0;i < ts + ss && buffer.ready();i++){
-                    try {
-                        if (i < ts) {
-                            teachers.add(new Teacher(buffer.readLine()));
-                        } else {
-                            students.add(new Student(buffer.readLine()));
-                        }
-                    } catch (NumberFormatException | Subject.SubjectException e){
-
-                    }
-                }
-                buffer.close();
-                System.out.println("Считанные объекты:");
-                System.out.println("Учителя:");
-                for(Teacher t : teachers){
-                    System.out.println(t.getStringTeacher());
-                }
-                System.out.println("Ученики:");
-                for(Student s : students){
-                    System.out.println(s.getStringStudent());
-                }
-                return true;
-            } catch (IOException e){
-                System.out.println("Ошибка чтения из файла");
-                return false;
-            }
-        }
-        return true;
-    }
-
     private <T extends Person> T readPerson(String name,boolean isTeacher) throws IOException {
-        //ArrayList<T> person = new ArrayList<T>();
-            //T res;
-            // FileReader reader = new FileReader(new File(folder.getPath() + "\\" + s));
-           //BufferedReader buffer = new BufferedReader(new FileReader(file));
                 if(isTeacher){
                     return (T) new Teacher(new File(folder.getPath() + "\\" + "t" + name + ".json"));
                 } else {
                     return  (T)(new Student(new File(folder.getPath() + "\\" + "s" + name + ".json")));
                 }
-                //buffer.close();
     }
 
     public void updateTeacher(String name) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NumberFormatException, InstantiationException {
@@ -155,13 +54,13 @@ public class PeopleDAO implements Dao {
                 File newFile = new File(folder.getPath() + "\\" + "t" + t.getName() + ".json");
                 if(newFile.createNewFile()) {
                     t.writeToFile(newFile);
+                    System.out.println("Объект обновлён");
                 } else {
                     System.out.println("Не удалось создать файл");
                 }
             } else {
                 System.out.println("Не удалось удалить файл");
             }
-
     }
 
     public void updateStudent(String name) throws IOException,NoSuchMethodException,InvocationTargetException,InstantiationException,IllegalAccessException, Subject.SubjectException {
@@ -175,17 +74,33 @@ public class PeopleDAO implements Dao {
         if (rc != 5) {
             System.out.println("Введите значение поля:");
             s.getClass().getMethod(methodsS[rc], String.class).invoke(s,FunctionHelper.readLine(scan));
-        } else {
-            System.out.println("Введите предмет");
-            String subject = FunctionHelper.readLine(scan);
-            System.out.println("Введите оценку");
-            String mark = FunctionHelper.readLine(scan);
-            s.setMark(mark, subject);
+        }
+        if(rc == 5) {
+            String[] msgs = {"0.Удалить предмет","1.Заменить оценку по предмету/добавить пердмет с оценкой"};
+            int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
+            if(choice == 0){
+                System.out.println("Введите предмет");
+                String subject = FunctionHelper.readLine(scan);
+                if(s.containsSubject(subject)){
+                    s.removeSubject(subject);
+                } else {
+                    System.out.println("Такого предмета нет");
+                    return;
+                }
+            }
+            if(choice == 1){
+                System.out.println("Введите предмет");
+                String subject = FunctionHelper.readLine(scan);
+                System.out.println("Введите оценку");
+                String mark = FunctionHelper.readLine(scan);
+                s.setMark(mark, subject);
+            }
         }
             if(file.delete()) {
                 File newfile = new File(folder.getPath() + "\\" + "s" + s.getName() + ".json");
                 if(newfile.createNewFile()) {
                     s.writeToFile(newfile);
+                    System.out.println("Объект обновлён");
                 } else {
                     System.out.println("Не удалось создать файл");
                 }
@@ -197,11 +112,6 @@ public class PeopleDAO implements Dao {
     public boolean update(){
         System.out.println("Кого вы хотите обновить:");
         String[] msgs = {"0.Учитель","1.Ученик"};
-        /*String[] tFields = {"0.Фамилия","1.Имя","2.Отчество","3.Номер телефона","4.Год рождения","5.Предмет","Время начала","Время окончания",};
-        String[] methodsT = {"setSurname","setName","setPatronymic","setTelNumber","setBirthYear","setSubject","setTimeStart","setTimeFinish"};
-        String[] sFields = {"0.Фамилия","1.Имя","2.Отчество","3.Номер телефона","4.Год рождения","5.Предмет и оценка",};
-        String[] methodsS = {"setSurname","setName","setPatronymic","setTelNumber","setBirthYear","setMarks"};
-*/
         int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
         System.out.println("Укажите имя объекта");
         String name  = FunctionHelper.readLine(scan);
