@@ -28,8 +28,17 @@ protected HashMap<Subject,Integer> marks = new HashMap<>();
         marks.putAll(subjects);
     }
 
-    public Student(String student) throws Subject.SubjectException{
+    public Student(String student) throws DataExceptions{
         String [] fields = student.split(";");
+        for(int i = 5;i < fields.length - 1;i++){
+            if(!Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !FunctionHelper.isInt(fields[i + 1])){
+                throw new DataExceptions("OutOfData");
+            }
+            i = i + 1;
+        }
+        if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0){
+            throw new DataExceptions("OutOfData");
+        }
         this.surname = fields[0];
         this.name = fields[1];
         this.patronymic = fields[2];
@@ -68,12 +77,15 @@ protected HashMap<Subject,Integer> marks = new HashMap<>();
     }
 
 
-    public void setMark(String mark,String subject) throws Subject.SubjectException,NumberFormatException {
+    public void setMark(String mark,String subject) throws DataExceptions,NumberFormatException {
+        if(Integer.parseInt(mark) <= 0 || !Subject.isSubject(subject)){
+            throw new DataExceptions("OutOfData");
+        }
         marks.put(Subject.value(subject),Integer.parseInt(mark));
     }
 
 
-    public void writeToFile(File file) throws IOException, Subject.SubjectException {
+    public void writeToFile(File file) throws IOException, DataExceptions {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
         Student s = new Student(this.getStringStudent());
@@ -104,10 +116,10 @@ protected HashMap<Subject,Integer> marks = new HashMap<>();
             return "";
         }*/
     }
-    public void removeSubject(String subject) throws Subject.SubjectException {
+    public void removeSubject(String subject) throws DataExceptions {
      marks.remove(Subject.value(subject));
     }
-    public boolean containsSubject(String subject) throws Subject.SubjectException {
+    public boolean containsSubject(String subject) throws DataExceptions {
     return marks.containsKey(Subject.value(subject));
     }
 }

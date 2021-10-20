@@ -19,6 +19,15 @@ public class FunctionHelper {
         return eofFlag;
     }
 
+    public static boolean isInt(String s){
+        try{
+            int i = Integer.parseInt(s);
+            return true;
+        }catch (NumberFormatException e){
+            return false;
+        }
+    }
+
     public static String readLine(Scanner scan) {
         String res = null;
         if (scan.hasNextLine()) {
@@ -53,7 +62,6 @@ public class FunctionHelper {
 		System.out.println("Выберите опцию:");
 		choice = readInt(scan);
         if(getEofFlag()){
-            System.out.println(getEofFlag());
             return 0;
         }
         if(getHasNextIntFlag()) {

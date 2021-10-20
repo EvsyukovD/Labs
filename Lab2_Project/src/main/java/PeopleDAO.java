@@ -9,8 +9,8 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class PeopleDAO implements Dao {
-    private final File folder;
-    private final Scanner scan;
+    private  File folder;
+    private  Scanner scan;
     public PeopleDAO(Scanner scn,File fldr){
        folder = fldr;
        scan = scn;
@@ -63,7 +63,7 @@ public class PeopleDAO implements Dao {
             }
     }
 
-    public void updateStudent(String name) throws IOException,NoSuchMethodException,InvocationTargetException,InstantiationException,IllegalAccessException, Subject.SubjectException {
+    public void updateStudent(String name) throws IOException,NoSuchMethodException,InvocationTargetException,InstantiationException,IllegalAccessException, DataExceptions {
         String[] sFields = {"0.Фамилия", "1.Имя", "2.Отчество", "3.Номер телефона", "4.Год рождения", "5.Предмет и оценка",};
         String[] methodsS = {"setSurname", "setName", "setPatronymic", "setTelNumber", "setBirthYear", "setMarks"};
 
@@ -127,7 +127,7 @@ public class PeopleDAO implements Dao {
             if(choice == 1 && hasFile("s" + name)){
                 try{
                     updateStudent(name);
-                }catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | NumberFormatException | Subject.SubjectException | InstantiationException e){
+                }catch (IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | NumberFormatException | DataExceptions | InstantiationException e){
                     e.printStackTrace();
                     System.out.println("Ошибка чтения / ошибка ввода");
                 }
@@ -149,16 +149,19 @@ public class PeopleDAO implements Dao {
         int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
         StringBuilder builder = new StringBuilder();
         System.out.println("Введите поля:");
+        String s;
         if(choice == 0){
            for(int i = 0;i < tFields.length;i++){
                System.out.println(tFields[i]);
-               builder.append(FunctionHelper.readLine(scan));
+               s = FunctionHelper.readLine(scan);
+               builder.append(s);
                builder.append(";");
            }
             Teacher teacher;
            try {
                teacher = new Teacher(builder.toString());
-           } catch(NumberFormatException | Subject.SubjectException e){
+           } catch(NumberFormatException | DataExceptions e){
+               e.printStackTrace();
                System.out.println("Не удалось создать персону");
                return false;
            }
@@ -197,7 +200,8 @@ public class PeopleDAO implements Dao {
             Student student;
             try {
                 student = new Student(builder.toString());
-            } catch(NumberFormatException | Subject.SubjectException e){
+            } catch(NumberFormatException | DataExceptions e){
+                e.printStackTrace();
                 System.out.println("Не удалось создать персону");
                 return false;
             }
@@ -213,7 +217,7 @@ public class PeopleDAO implements Dao {
                     return false;
                 }
                 student.writeToFile(file);
-            } catch (IOException | Subject.SubjectException e){
+            } catch (IOException | DataExceptions e){
                 System.out.println("Ошибка при создании файла");
                 return false;
             }

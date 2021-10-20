@@ -8,16 +8,25 @@ public enum Subject {
     ENGLISH,
     TENZORS,
     PROJECTS;
-    public static Subject value(String subject) throws SubjectException{
+    public static Subject value(String subject) throws DataExceptions{
         String str = subject.toUpperCase(Locale.ROOT);
          for(Subject s : Subject.values()){
              if(s.toString().equals(str)){
                  return s;
              }
          }
-         throw new SubjectException("notASubject");
+         throw new DataExceptions("notASubject");
     }
-    public static class SubjectException extends Exception{
+    public static boolean isSubject(String subject){
+        String str = subject.toUpperCase(Locale.ROOT);
+        for(Subject s : Subject.values()){
+            if(s.toString().equals(str)){
+                return true;
+            }
+        }
+        return false;
+    }
+    /*public static class SubjectException extends Exception{
         public SubjectException(String s){super(s);}
-    }
+    }*/
 }

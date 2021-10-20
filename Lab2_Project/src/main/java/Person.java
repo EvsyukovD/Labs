@@ -2,7 +2,7 @@ public abstract class Person {
     protected String surname;
     protected String name;
     protected String patronymic;
-    protected int telNumber;
+    protected long telNumber;
     protected int birthYear;
 
     public  String getSurname(){
@@ -14,7 +14,7 @@ public abstract class Person {
     public  String getPatronymic(){
         return patronymic;
     }
-    public  int getTelNumber(){
+    public  long getTelNumber(){
         return telNumber;
     }
     public  int getBirthYear(){
@@ -28,7 +28,10 @@ public abstract class Person {
         this.patronymic = patronymic;
     }
 
-    public void setBirthYear(String birthYear) throws NumberFormatException {
+    public void setBirthYear(String birthYear) throws NumberFormatException, DataExceptions {
+        if(Integer.parseInt(birthYear) <= 0){
+            throw new DataExceptions("OutOfData");
+        }
         this.birthYear = Integer.parseInt(birthYear);
     }
 
@@ -36,7 +39,10 @@ public abstract class Person {
         this.surname = surname;
     }
 
-    public void setTelNumber(String telNumber) throws NumberFormatException{
-        this.telNumber = Integer.parseInt(telNumber);
+    public void setTelNumber(String telNumber) throws NumberFormatException, DataExceptions {
+        if(Integer.parseInt(telNumber) <= 0){
+            throw new DataExceptions("OutOfData");
+        }
+        this.telNumber = Long.parseLong(telNumber);
     }
 }

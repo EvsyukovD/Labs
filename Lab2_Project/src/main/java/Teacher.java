@@ -20,7 +20,7 @@ public class Teacher extends Person{
    @JsonCreator
    public Teacher(@JsonProperty("surname") String surname,@JsonProperty("name") String name,
                   @JsonProperty("patronymic") String patronymic,
-                  @JsonProperty("telNumber") int telNumber,@JsonProperty("birthYear") int birthYear,
+                  @JsonProperty("telNumber") long telNumber,@JsonProperty("birthYear") int birthYear,
                   @JsonProperty("subject") Subject subject,@JsonProperty("timeStart") int timeStart,
                   @JsonProperty("timeFinish") int timeFinish){
        this.subject = subject;
@@ -33,12 +33,20 @@ public class Teacher extends Person{
        this.telNumber = telNumber;
    }
 
-   public Teacher(String teacher) throws NumberFormatException, Subject.SubjectException {
+   public Teacher(String teacher) throws NumberFormatException, DataExceptions {
           String [] fields = teacher.split(";");
+       if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
+               Integer.parseInt(fields[6]) <= 0 || Integer.parseInt(fields[7]) <= 0){
+           throw new DataExceptions("OutOfData");
+       }
           this.surname = fields[0];
           this.name = fields[1];
           this.patronymic = fields[2];
-          this.telNumber = Integer.parseInt(fields[3]);
+          /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
+                  Integer.parseInt(fields[6]) <= 0 || Integer.parseInt(fields[7]) <= 0){
+              throw new DataExceptions("OutOfData");
+          }*/
+          this.telNumber = Long.parseLong(fields[3]);
           this.birthYear = Integer.parseInt(fields[4]);
           this.subject = Subject.value(fields[5]);
           this.timeStart = Integer.parseInt(fields[6]);
@@ -57,7 +65,6 @@ public class Teacher extends Person{
             this.name = t.name;
             this.patronymic = t.patronymic;
             this.telNumber = t.telNumber;
-
     }
     public Subject getSubject(){
        return subject;
@@ -71,15 +78,21 @@ public class Teacher extends Person{
         return timeFinish;
     }
 
-    public void setTimeFinish(String timeFinish) throws NumberFormatException {
+    public void setTimeFinish(String timeFinish) throws NumberFormatException,DataExceptions {
+       if(Integer.parseInt(timeFinish) <= 0){
+           throw new DataExceptions("OutOfData");
+       }
         this.timeFinish = Integer.parseInt(timeFinish);
     }
 
-    public void setTimeStart(String timeStart) throws NumberFormatException{
+    public void setTimeStart(String timeStart) throws NumberFormatException,DataExceptions{
+        if(Integer.parseInt(timeStart) <= 0){
+            throw new DataExceptions("OutOfData");
+        }
         this.timeStart = Integer.parseInt(timeStart);
     }
 
-    public void setSubject(String subject) throws Subject.SubjectException {
+    public void setSubject(String subject) throws DataExceptions {
         this.subject = Subject.value(subject);
     }
 

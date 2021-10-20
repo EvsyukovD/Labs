@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class CashedPeopleDAO implements Dao{
-    private  final File folder;
-    private final Scanner scan;
+    private  File folder;
+    private  Scanner scan;
     private HashMap<String,String> map = new HashMap<>();
     public CashedPeopleDAO(Scanner scn,File fldr) throws IOException {
         folder = fldr;
@@ -30,9 +30,9 @@ public class CashedPeopleDAO implements Dao{
             }
         }
     }
-    public  boolean quit(){
+    /*public  boolean quit(){
         return false;
-    }
+    }*/
 
     public boolean hasFile(String name){
         File[] files = folder.listFiles();
@@ -65,7 +65,7 @@ public class CashedPeopleDAO implements Dao{
             Teacher teacher;
             try {
                 teacher = new Teacher(builder.toString());
-            } catch(NumberFormatException | Subject.SubjectException e){
+            } catch(NumberFormatException | DataExceptions e){
                 System.out.println("Не удалось создать персону");
                 return false;
             }
@@ -105,7 +105,7 @@ public class CashedPeopleDAO implements Dao{
             Student student;
             try {
                 student = new Student(builder.toString());
-            } catch(NumberFormatException | Subject.SubjectException e){
+            } catch(NumberFormatException | DataExceptions e){
                 System.out.println("Не удалось создать персону");
                 return false;
             }
@@ -122,7 +122,7 @@ public class CashedPeopleDAO implements Dao{
                 }
                 student.writeToFile(file);
                 map.put("s" + student.getName(),student.getStringStudent());
-            } catch (IOException | Subject.SubjectException e){
+            } catch (IOException | DataExceptions e){
                 System.out.println("Ошибка при создании файла");
                 return false;
             }
@@ -139,7 +139,6 @@ public class CashedPeopleDAO implements Dao{
         System.out.println("Укажите имя объекта");
         String name  = FunctionHelper.readLine(scan);
         char id = choice == 0 ? 't':'s';
-        System.out.println("id + name : " + map.containsKey(id + name));
         if(map.containsKey(id + name)){
             File file = new File(folder.getPath() + "\\" + id + name + ".json");
             boolean f = file.delete();
@@ -191,7 +190,7 @@ public class CashedPeopleDAO implements Dao{
         System.out.println("Введите значение поля:");
         teacher.getClass().getMethod(methodsT[rc], String.class).invoke(teacher,FunctionHelper.readLine(scan));
         if(file.delete()) {
-            File newFile = new File(folder.getPath() + "\\" + "t" + name + ".json");
+            File newFile = new File(folder.getPath() + "\\" + "t" + teacher.getName() + ".json");
             if(newFile.createNewFile()) {
                 teacher.writeToFile(newFile);
                 map.remove("t" + name);
@@ -205,7 +204,7 @@ public class CashedPeopleDAO implements Dao{
 
     }
 
-    public void updateStudent(Student student) throws IOException,NoSuchMethodException,InvocationTargetException,InstantiationException,IllegalAccessException, Subject.SubjectException {
+    public void updateStudent(Student student) throws IOException,NoSuchMethodException,InvocationTargetException,InstantiationException,IllegalAccessException, DataExceptions {
         String[] sFields = {"0.Фамилия", "1.Имя", "2.Отчество", "3.Номер телефона", "4.Год рождения", "5.Предмет и оценка",};
         String[] methodsS = {"setSurname", "setName", "setPatronymic", "setTelNumber", "setBirthYear", "setMarks"};
         String name = student.getName();
@@ -236,8 +235,9 @@ public class CashedPeopleDAO implements Dao{
                 student.setMark(mark, subject);
             }
         }
+        System.out.println("this");
         if(file.delete()) {
-            File newfile = new File(folder.getPath() + "\\" + "s" + name + ".json");
+            File newfile = new File(folder.getPath() + "\\" + "s" + student.getName() + ".json");
             if(newfile.createNewFile()) {
                 student.writeToFile(newfile);
                 map.remove("s" + name);
@@ -258,13 +258,14 @@ public class CashedPeopleDAO implements Dao{
         System.out.println("Укажите имя объекта");
         String name  = FunctionHelper.readLine(scan);
         char id = choice == 0 ? 't' : 's';
-        System.out.println(map.containsKey(id + name));
+        System.out.println(map.keySet());
         if(map.containsKey(id + name)) {
             if (id == 't') {
                 try {
                     Teacher teacher = new Teacher(map.get(id + name));
                     updateTeacher(teacher);
-                } catch (Subject.SubjectException | IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                } catch (DataExceptions | IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                    e.printStackTrace();
                     System.out.println("Не удалось обновить объект");
                     return false;
                 }
@@ -273,7 +274,8 @@ public class CashedPeopleDAO implements Dao{
                     System.out.println(map.keySet());
                     Student student = new Student(map.get(id + name));
                     updateStudent(student);
-                } catch (Subject.SubjectException | IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                } catch (DataExceptions | IOException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                    e.printStackTrace();
                     System.out.println("Не удалось обновить объект");
                     return false;
                 }
@@ -299,7 +301,7 @@ public class CashedPeopleDAO implements Dao{
                try {
                    Teacher teacher = new Teacher(map.get(id + name));
                    System.out.println("Ваша персона : " + mapper.writeValueAsString(teacher));
-               } catch(Subject.SubjectException | JsonProcessingException e){
+               } catch(DataExceptions | JsonProcessingException e){
                    System.out.println("Ошибка при поиске персоны");
                    return false;
                }
@@ -307,7 +309,7 @@ public class CashedPeopleDAO implements Dao{
                try {
                    Student student = new Student(map.get(id + name));
                    System.out.println("Ваша персона :" + mapper.writeValueAsString(student));
-               } catch(Subject.SubjectException | JsonProcessingException e){
+               } catch(DataExceptions | JsonProcessingException e){
                    System.out.println("Ошибка при поиске персоны");
                    return false;
                }
