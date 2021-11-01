@@ -1,6 +1,8 @@
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Scanner;
+import java.net.URI;
+import java.nio.file.*;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class Dispathcher extends Thread {
@@ -8,64 +10,104 @@ public class Dispathcher extends Thread {
     private PeopleService pService;
     private DState state = DState.NONE;
     private boolean stop = false;
-    private String[] msgs = {"0.Нет","1.Да"};
-    public Dispathcher(DataQueue<String> queue,PeopleService pService){
-    this.queue = queue;
-     this.pService = pService;
+    private String[] msgs = {"0.Нет", "1.Да"};
+    private File errorFolder;
+
+    public Dispathcher(DataQueue<String> queue, PeopleService pService, File errorFolder) {
+        this.queue = queue;
+        this.pService = pService;
+        this.errorFolder = errorFolder;
     }
 
-    private boolean checkString(String s){
-        return s.equals("update") || s.equals("createPerson") || s.equals("deletePerson") || s.equals("find");
+    private boolean checkString(String s) {
+        return s.startsWith("update") || s.startsWith("createPerson") || s.startsWith("deletePerson") || s.startsWith("find");
     }
 
-    public void doStop(boolean b){
-       this.stop = b;
+    private boolean InvokeMethods(PeopleService pService, String str) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String name = str.split(" ")[0];
+        String id = str.split(" ")[1];
+        if (name.equals("deletePerson") || name.equals("find")) {
+            return (boolean) pService.getClass().getMethod(name, String.class).invoke(pService, id);
+        }
+        if (name.equals("update")) {
+            String field = str.split(" ")[2];
+            String data = str.split(" ")[3];
+            return (boolean) pService.getClass().getMethod(name, String.class, String.class, String.class).invoke(pService, id, field, data);
+        }
+        if (name.equals("createPerson")) {
+            String data = str.split(" ")[2];
+            return (boolean) pService.getClass().getMethod(name, String.class, String.class).invoke(pService, id, data);
+        }
+        return false;
+    }
+
+    public synchronized void doStop() {
+        this.stop = true;
+    }
+
+    public synchronized boolean keepRunning() {
+        return !stop;
     }
 
     @Override
     public void run() {
-        boolean stop = false;
-          while(!stop) {
-              state = DState.NONE;
-              //queue.setSignal(true);
-              //D start
-              if(this.stop){
-                  System.out.println("Файлов управления нет");
-                  return;
-              }
-              try {
-                  String name = "";
-                  name = queue.poll();
-                  if (checkString(name)) {
-                      System.out.println("Команда :" + name);
-                      state = DState.getValue((boolean) pService.getClass().getMethod(name, null).invoke(pService, null));
-                      while (state != DState.WORK) {
-                          wait();
-                      }
-                  }
-                  TimeUnit.SECONDS.sleep(1);
-                  /*if(queue.size() != 0){
-                  System.out.println("Продолжть работу программы?");
-                  stop = FunctionHelper.dialog(msgs, msgs.length, pService.getScn()) == 0;
-                  //TimeUnit.SECONDS.sleep(2);
-                  if(stop){
-                      return;
-                  }
-                  }*/
-                  if(queue.size() == 0){
-                      System.out.println("Файлов управления нет");
-                      return;
-                  }
-              } catch (InterruptedException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                  e.printStackTrace();
-              }
-          }
+        int n;
+        BufferedWriter buffer = null;
+        File file = null;
+        String fPath = "";
+        while (true) {
+            state = DState.NONE;
+            try {
+                if (!keepRunning()) {
+                    System.out.println("Файлов управления нет");
+                    return;
+                }
+                String name;
+                fPath = queue.poll();
+                file = new File(fPath);
+                buffer = new BufferedWriter(new FileWriter(fPath, true));
+                n = queue.getLimit() - 1;
+                System.out.println("n = " + n);
+                for (int i = 0; i < n; i++) {
+                    name = queue.poll();
+                    if (checkString(name)) {
+                        System.out.println("Команда :" + name.split(" ")[0]);
+                        state = DState.getValue(InvokeMethods(pService, name));
+                        while (state != DState.WORK) {
+                            wait();
+                        }
+                    }
+                }
+                buffer.close();
+                file.delete();
+                TimeUnit.SECONDS.sleep(1L);
+                if (queue.size() == 0) {
+                    System.out.println("Файлов управления нет");
+                    return;
+                }
+            } catch (Exception e) {
+                try {
+                    buffer.newLine();
+                    e.getCause().printStackTrace(new PrintWriter(buffer));
+                    buffer.close();
+                    File errorFile = new File(errorFolder.getPath() + "\\" + file.getName());
+                    if (errorFile.exists()) {
+                        errorFile.delete();
+                    }
+                    Files.move(Path.of(fPath), Path.of(errorFolder.getPath() + "\\" + file.getName()));
+                } catch (Exception ex) {
+                }
+                return;
+            }
+        }
     }
-  enum DState{
+
+    enum DState {
         WORK,
         NONE;
-      public static DState getValue(boolean b){
+
+        public static DState getValue(boolean b) {
             return WORK;
-      }
-  }
+        }
+    }
 }

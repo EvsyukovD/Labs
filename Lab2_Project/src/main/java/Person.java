@@ -2,8 +2,8 @@ public abstract class Person {
     protected String surname;
     protected String name;
     protected String patronymic;
-    protected long telNumber;
-    protected int birthYear;
+    protected long number;
+    protected int year;
 
     public  String getSurname(){
         return surname;
@@ -14,11 +14,11 @@ public abstract class Person {
     public  String getPatronymic(){
         return patronymic;
     }
-    public  long getTelNumber(){
-        return telNumber;
+    public  long getNumber(){
+        return number;
     }
-    public  int getBirthYear(){
-        return birthYear;
+    public  int getYear(){
+        return year;
     }
     public void setName(String name){
         this.name = name;
@@ -28,21 +28,26 @@ public abstract class Person {
         this.patronymic = patronymic;
     }
 
-    public void setBirthYear(String birthYear) throws NumberFormatException, DataExceptions {
-        if(Integer.parseInt(birthYear) <= 0){
-            throw new DataExceptions("OutOfData");
+    public void setYear(String birthYear) throws NumberFormatException, DataExceptions {
+        if(!FunctionHelper.isInt(birthYear)){
+            throw new DataExceptions(birthYear + "NotANumber");
         }
-        this.birthYear = Integer.parseInt(birthYear);
+        if(Integer.parseInt(birthYear) <= 0){
+            throw new DataExceptions(birthYear + "- WrongYear");
+        }
+        this.year = Integer.parseInt(birthYear);
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
-    public void setTelNumber(String telNumber) throws NumberFormatException, DataExceptions {
-        if(Integer.parseInt(telNumber) <= 0){
-            throw new DataExceptions("OutOfData");
+    public void setNumber(String telNumber) throws NumberFormatException, DataExceptions {
+        if(!FunctionHelper.isLong(telNumber)){
+            throw new DataExceptions(telNumber + "- NotANumber");
         }
-        this.telNumber = Long.parseLong(telNumber);
+        if(Long.parseLong(telNumber) <= 0){
+            throw new DataExceptions(telNumber + "- WrongNumber");
+        }
+        this.number = Long.parseLong(telNumber);
     }
 }

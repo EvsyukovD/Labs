@@ -4,29 +4,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Controller extends Thread {
     private File folder;
     private DataQueue<String> queue;
     private boolean stop = false;
-    private String[] msgs = {"0.Нет","1.Да"};
+    private String[] msgs = {"0.Нет", "1.Да"};
     private Scanner scan;
-    public Controller(File folder,DataQueue<String> queue,Scanner scn){
+
+    public Controller(File folder, DataQueue<String> queue, Scanner scn) {
         this.queue = queue;
         this.folder = folder;
         this.scan = scn;
     }
 
-    private synchronized boolean keepRunning(){
-        return stop == false;
+    private synchronized boolean keepRunning() {
+        return !stop;
     }
 
-    public synchronized void doStop(){
+    public synchronized void doStop() {
         stop = true;
     }
 
@@ -34,15 +32,13 @@ public class Controller extends Thread {
     @Override
     public void run() {
         do {
-            //System.out.println("C run");
             File[] files = folder.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.startsWith("manage") && name.endsWith(".txt");
                 }
             });
-            if(files.length == 0){
-                //System.out.println("Файлов управления нет");
+            if (files.length == 0) {
                 return;
             }
             /*LinkedList<File> files = new LinkedList<>();
@@ -62,32 +58,30 @@ public class Controller extends Thread {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }*/
-            for(int i = 0;i < files.length;i++) {
-                String s = null;
+            // processFile();
+            for (int i = 0; i < files.length; i++) {
+                LinkedList<String> list;
                 File file = files[i];
-                //File file = files.getFirst();
                 if (file.isFile()) {
                     try {
-                        s = PeopleService.readManageFile(file.getPath());
-
-                    } catch (IOException e) {
+                        list = PeopleService.readManageFile(file.getPath());
+                        TimeUnit.SECONDS.sleep(2L);
+                    } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("Ошибка чтения файла");
+                        return;
                     }
-                    if(s.equals("")){
-                        file.delete();
-                    }
-                    if (!s.equals("")) {
-                        String[] subs = s.split(";");
-                        for (String sub : subs) {
-                            try {
-                                this.queue.offer(sub);
+                    if (list.size() > 0) {
+                        try {
+                            this.queue.setLimit(list.size() + 1);
+                            this.queue.offer(file.getPath());
+                            while (list.size() != 0) {
+                                this.queue.offer(list.removeFirst());
                                 TimeUnit.SECONDS.sleep(1L);
-                                file.delete();
-                            } catch (InterruptedException e) {
-                                System.out.println("Прерывание потока");
-                                e.printStackTrace();
                             }
+                        } catch (InterruptedException e) {
+                            System.out.println("Прерывание потока");
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -117,7 +111,7 @@ public class Controller extends Thread {
             } catch (InterruptedException e){
                  e.printStackTrace();
             }*/
-       } while(keepRunning());
+        } while (keepRunning());
     }
 
 }

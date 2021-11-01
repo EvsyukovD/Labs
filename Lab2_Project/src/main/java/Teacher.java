@@ -1,95 +1,107 @@
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Locale;
 
-public class Teacher extends Person{
+public class Teacher extends Person {
     private Subject subject;
-    private int timeStart;
-    private int timeFinish;
-   @JsonCreator
-   public Teacher(@JsonProperty("surname") String surname,@JsonProperty("name") String name,
-                  @JsonProperty("patronymic") String patronymic,
-                  @JsonProperty("telNumber") long telNumber,@JsonProperty("birthYear") int birthYear,
-                  @JsonProperty("subject") Subject subject,@JsonProperty("timeStart") int timeStart,
-                  @JsonProperty("timeFinish") int timeFinish){
-       this.subject = subject;
-       this.birthYear = birthYear;
-       this.timeStart = timeStart;
-       this.timeFinish = timeFinish;
-       this.surname = surname;
-       this.name = name;
-       this.patronymic = patronymic;
-       this.telNumber = telNumber;
-   }
+    private int start;
+    private int finish;
 
-   public Teacher(String teacher) throws NumberFormatException, DataExceptions {
-          String [] fields = teacher.split(";");
-       if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
+    @JsonCreator
+    public Teacher(@JsonProperty("surname") String surname, @JsonProperty("name") String name,
+                   @JsonProperty("patronymic") String patronymic,
+                   @JsonProperty("number") long telNumber, @JsonProperty("year") int birthYear,
+                   @JsonProperty("subject") Subject subject, @JsonProperty("start") int timeStart,
+                   @JsonProperty("finish") int timeFinish) {
+        this.subject = subject;
+        this.year = birthYear;
+        this.start = timeStart;
+        this.finish = timeFinish;
+        this.surname = surname;
+        this.name = name;
+        this.patronymic = patronymic;
+        this.number = telNumber;
+    }
+
+    public Teacher(String teacher) throws NumberFormatException, DataExceptions {
+        String[] fields = teacher.split(";");
+       /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
                Integer.parseInt(fields[6]) <= 0 || Integer.parseInt(fields[7]) <= 0){
            throw new DataExceptions("OutOfData");
-       }
-          this.surname = fields[0];
-          this.name = fields[1];
-          this.patronymic = fields[2];
-          /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
-                  Integer.parseInt(fields[6]) <= 0 || Integer.parseInt(fields[7]) <= 0){
-              throw new DataExceptions("OutOfData");
-          }*/
-          this.telNumber = Long.parseLong(fields[3]);
-          this.birthYear = Integer.parseInt(fields[4]);
-          this.subject = Subject.value(fields[5]);
-          this.timeStart = Integer.parseInt(fields[6]);
-          this.timeFinish = Integer.parseInt(fields[7]);
-   }
+       }*/
+        String msg = isCorrect(fields);
+        if (!msg.equals("correct")) {
+            throw new DataExceptions(msg);
+        }
+        this.surname = fields[0];
+        this.name = fields[1];
+        this.patronymic = fields[2];
+        this.number = Long.parseLong(fields[3]);
+        this.year = Integer.parseInt(fields[4]);
+        this.subject = Subject.value(fields[5]);
+        this.start = Integer.parseInt(fields[6]);
+        this.finish = Integer.parseInt(fields[7]);
+    }
 
-    public Teacher(File file) throws IOException{
+    public Teacher(File file) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
-            Teacher t = objectMapper.readValue(file, Teacher.class);
-            this.subject = t.subject;
-            this.birthYear = t.birthYear;
-            this.timeStart = t.timeStart;
-            this.timeFinish = t.timeFinish;
-            this.surname = t.surname;
-            this.name = t.name;
-            this.patronymic = t.patronymic;
-            this.telNumber = t.telNumber;
-    }
-    public Subject getSubject(){
-       return subject;
+        Teacher t = objectMapper.readValue(file, Teacher.class);
+        this.subject = t.subject;
+        this.year = t.year;
+        this.start = t.start;
+        this.finish = t.finish;
+        this.surname = t.surname;
+        this.name = t.name;
+        this.patronymic = t.patronymic;
+        this.number = t.number;
     }
 
-    public int getTimeStart() {
-        return timeStart;
+    public Subject getSubject() {
+        return subject;
     }
 
-    public int getTimeFinish() {
-        return timeFinish;
+    public int getStart() {
+        return start;
     }
 
-    public void setTimeFinish(String timeFinish) throws NumberFormatException,DataExceptions {
-       if(Integer.parseInt(timeFinish) <= 0){
-           throw new DataExceptions("OutOfData");
-       }
-        this.timeFinish = Integer.parseInt(timeFinish);
+
+    private String isCorrect(String[] fields) throws NumberFormatException {
+        if (Long.parseLong(fields[3]) <= 0) {
+            return fields[3] + "- WrongNumber";
+        }
+        if (Integer.parseInt(fields[4]) <= 0) {
+            return fields[4] + "- WrongYear";
+        }
+        if (Integer.parseInt(fields[6]) <= 0) {
+            return fields[6] + "- WrongStartTime";
+        }
+        if (Integer.parseInt(fields[7]) <= 0) {
+            return fields[7] + "- WrongFinishTime";
+        }
+        return "correct";
     }
 
-    public void setTimeStart(String timeStart) throws NumberFormatException,DataExceptions{
-        if(Integer.parseInt(timeStart) <= 0){
+    public int getFinish() {
+        return finish;
+    }
+
+    public void setFinish(String timeFinish) throws NumberFormatException, DataExceptions {
+        if (Integer.parseInt(timeFinish) <= 0) {
             throw new DataExceptions("OutOfData");
         }
-        this.timeStart = Integer.parseInt(timeStart);
+        this.finish = Integer.parseInt(timeFinish);
+    }
+
+    public void setStart(String timeStart) throws NumberFormatException, DataExceptions {
+        if (Integer.parseInt(timeStart) <= 0) {
+            throw new DataExceptions("OutOfData");
+        }
+        this.start = Integer.parseInt(timeStart);
     }
 
     public void setSubject(String subject) throws DataExceptions {
@@ -105,12 +117,13 @@ public class Teacher extends Person{
         wr.close();
 */
     }
-    @JsonIgnore
-    public String getStringTeacher(){
-        String res = this.surname + ";" +this.name + ";"+ this.patronymic + ";" +
-                (this.telNumber) + ";" + this.birthYear + ";";
 
-        res += subject.toString() + ";" + this.timeStart + ";" + this.timeFinish + ";";
+    @JsonIgnore
+    public String getStringTeacher() {
+        String res = this.surname + ";" + this.name + ";" + this.patronymic + ";" +
+                (this.number) + ";" + this.year + ";";
+
+        res += subject.toString() + ";" + this.start + ";" + this.finish + ";";
 
         return res;
         /*ObjectMapper objectMapper = new ObjectMapper();

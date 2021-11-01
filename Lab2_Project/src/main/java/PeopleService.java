@@ -1,76 +1,69 @@
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Scanner;
 
-public class PeopleService implements Dao {
-    private  PeopleDAO pDao;
-    private  CashedPeopleDAO cDao;
+public class PeopleService implements DAO {
+    private PeopleDAO pDao;
+    private CashedPeopleDAO cDao;
     public Scanner scn;
     private File folder;
-    public PeopleService(Scanner scan,File fldr) throws IOException {
-        scn =  scan;
+
+    public PeopleService(Scanner scan, File fldr) /*throws IOException*/ {
+        scn = scan;
         folder = fldr;
-        //pDao = new PeopleDAO(scn,fldr);
-        //cDao = new CashedPeopleDAO(scn,fldr);
-    }
-    public Scanner getScn(){
-        return this.scn;
-    }
-    @Override
-    public boolean createPerson() {
-        PeopleDAO pDao = new PeopleDAO(scn,folder);
-        return pDao.createPerson();
     }
 
     @Override
-    public boolean deletePerson() {
+    public boolean createPerson(String id, String data) throws IOException, DataExceptions {
+        PeopleDAO pDao = new PeopleDAO(scn, folder);
+            return pDao.createPerson(id, data);
+    }
+
+    @Override
+    public boolean deletePerson(String id) {
         try {
             CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder);
-            return cDao.deletePerson();
-        } catch (IOException e){
+            return cDao.deletePerson(id);
+        } catch (Exception e) {
             System.out.println("Не удалось считать данные из файла");
             return false;
         }
     }
 
     @Override
-    public boolean update() {
+    public boolean update(String id, String field, String data) {
         try {
             CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder);
-            return cDao.update();
-        } catch (IOException e){
+            return cDao.update(id, field, data);
+        } catch (Exception e) {
             System.out.println("Не удалось считать данные из файла");
             return false;
         }
     }
 
     @Override
-    public boolean find() {
+    public boolean find(String id) {
         try {
             CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder);
-            return cDao.find();
-        } catch (IOException e){
+            return cDao.find(id);
+        } catch (Exception e) {
             System.out.println("Не удалось считать данные из файла");
             return false;
         }
     }
 
-    public static String readManageFile(String path) throws IOException {
-        File file =  new File(path);
-        StringBuffer commands = new StringBuffer();
-          boolean canReadFlag = true;
-            String buffer;
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            while(canReadFlag){
-                  buffer = reader.readLine();
-                  canReadFlag = buffer != null;
-                  if(buffer != null) {
-                      commands.append(buffer + ";");
-                  }
+    public static LinkedList<String> readManageFile(String path) throws IOException {
+        File file = new File(path);
+        LinkedList<String> strs = new LinkedList<>();
+        String buffer = "";
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        while (buffer != null) {
+            buffer = reader.readLine();
+            if (buffer != null) {
+                strs.add(buffer);
             }
-            reader.close();
-            return commands.toString();
-            //System.out.println("Файл не найден");
+        }
+        reader.close();
+        return strs;
     }
 }

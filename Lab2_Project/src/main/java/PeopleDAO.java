@@ -1,22 +1,15 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 
-public class PeopleDAO implements Dao {
+public class PeopleDAO implements DAO {
     private  File folder;
     private  Scanner scan;
     public PeopleDAO(Scanner scn,File fldr){
        folder = fldr;
        scan = scn;
-    }
-    public  boolean quit(){
-        return false;
     }
 
     public boolean hasFile(String name){
@@ -109,7 +102,7 @@ public class PeopleDAO implements Dao {
             }
     }
     @Override
-    public boolean update(){
+    public boolean update(String id,String field,String data){
         System.out.println("Кого вы хотите обновить:");
         String[] msgs = {"0.Учитель","1.Ученик"};
         int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
@@ -141,8 +134,19 @@ public class PeopleDAO implements Dao {
     }
 
     @Override
-    public boolean createPerson() {
-        System.out.println("Какую персону создать:");
+    public boolean createPerson(String id,String data) throws IOException,DataExceptions{
+            if (id.charAt(0) == 't') {
+                Teacher teacher = new Teacher(data);
+                teacher.writeToFile(new File(folder.getPath() + "\\t" + teacher.getName() + ".json"));
+                return true;
+            }
+            if(id.charAt(0) == 's'){
+                Student student = new Student(data);
+                student.writeToFile(new File(folder.getPath() + "\\s" + student.getName() + ".json"));
+                return true;
+            }
+        return false;
+        /*System.out.println("Какую персону создать:");
         String[] msgs = {"0.Учитель","1.Ученик"};
         String[] tFields = {"Фамилия","Имя","Отчество","Номер телефона","Год рождения","Предмет","Время начала","Время конца"};
         String[] sFields = {"Фамилия","Имя","Отчество","Номер телефона","Год рождения"};
@@ -223,11 +227,11 @@ public class PeopleDAO implements Dao {
             }
         }
         System.out.println("Объект создан");
-        return true;
+        return true;*/
     }
 
     @Override
-    public boolean deletePerson() {
+    public boolean deletePerson(String id) {
         System.out.println("Кого вы хотите удалить:");
         String[] msgs = {"0.Учитель","1.Ученик"};
         int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
@@ -259,17 +263,17 @@ public class PeopleDAO implements Dao {
 
     }
     @Override
-    public boolean find() {
+    public boolean find(String id) {
         System.out.println("Кого вы хотите найти:");
         String[] msgs = {"0.Учитель","1.Ученик"};
         int choice = FunctionHelper.dialog(msgs,msgs.length,scan);
         System.out.println("Укажите имя объекта");
         String name  = FunctionHelper.readLine(scan);
-        char id = choice == 0 ? 't' : 's';
+        char c = choice == 0 ? 't' : 's';
         if(hasFile(id + name)){
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                if (id == 't') {
+                if (c == 't') {
                     mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
                     Teacher t = readPerson(name, true);
                     System.out.println("Ваша персона");

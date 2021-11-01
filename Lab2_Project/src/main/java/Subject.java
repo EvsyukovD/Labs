@@ -26,7 +26,4 @@ public enum Subject {
         }
         return false;
     }
-    /*public static class SubjectException extends Exception{
-        public SubjectException(String s){super(s);}
-    }*/
 }
