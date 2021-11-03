@@ -1,16 +1,14 @@
-import javax.swing.*;
-import java.io.File;
-import java.util.AbstractQueue;
+package LabUtils;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class DataQueue<T> {
     private LinkedList<T> elements = new LinkedList<>();
     private int limit = 10;
-    private volatile boolean dispatchWork = false;
 
     public synchronized void setLimit(int limit) throws InterruptedException {
-        while (this.elements.size() > 0) {
+        while (this.elements.size() == this.limit) {
             wait();
         }
         if (elements.size() == 0) {
@@ -19,18 +17,16 @@ public class DataQueue<T> {
         this.limit = limit;
     }
 
+    public boolean isConsuming() {
+        return elements.size() != limit;
+    }
+
     public int getLimit() {
         return limit;
     }
 
-    public synchronized boolean signal() throws InterruptedException {
-        while (dispatchWork) {
-            wait();
-        }
-        if (!dispatchWork) {
-            notifyAll();
-        }
-        return dispatchWork;
+    public synchronized void clear() {
+        elements.clear();
     }
 
     public Iterator<T> iterator() {

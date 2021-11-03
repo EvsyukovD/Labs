@@ -1,8 +1,12 @@
+package Persons;
+
+import LabUtils.DataExceptions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import LabUtils.Subject;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,12 +31,8 @@ public class Teacher extends Person {
         this.number = telNumber;
     }
 
-    public Teacher(String teacher) throws NumberFormatException, DataExceptions {
+    public Teacher(String teacher) throws NumberFormatException,DataExceptions {
         String[] fields = teacher.split(";");
-       /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0 ||
-               Integer.parseInt(fields[6]) <= 0 || Integer.parseInt(fields[7]) <= 0){
-           throw new DataExceptions("OutOfData");
-       }*/
         String msg = isCorrect(fields);
         if (!msg.equals("correct")) {
             throw new DataExceptions(msg);
@@ -71,6 +71,9 @@ public class Teacher extends Person {
 
 
     private String isCorrect(String[] fields) throws NumberFormatException {
+        if(fields.length < 8){
+            return "WrongData";
+        }
         if (Long.parseLong(fields[3]) <= 0) {
             return fields[3] + "- WrongNumber";
         }
@@ -111,11 +114,6 @@ public class Teacher extends Person {
     public void writeToFile(File file) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(file, this);
-        /*BufferedWriter wr = new BufferedWriter(new FileWriter(file));
-        wr.write(getStringTeacher());
-        wr.newLine();
-        wr.close();
-*/
     }
 
     @JsonIgnore
@@ -126,12 +124,6 @@ public class Teacher extends Person {
         res += subject.toString() + ";" + this.start + ";" + this.finish + ";";
 
         return res;
-        /*ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            return "";
-        }*/
     }
 
 }

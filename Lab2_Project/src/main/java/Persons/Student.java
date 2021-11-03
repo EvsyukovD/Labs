@@ -1,9 +1,13 @@
+package Persons;
+
+import LabUtils.DataExceptions;
+import LabUtils.FunctionHelper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+import LabUtils.Subject;
 import java.io.*;
 import java.util.*;
 
@@ -12,7 +16,7 @@ public class Student extends Person {
 
     @JsonCreator
     public Student(@JsonProperty("surname") String surname, @JsonProperty("name") String name, @JsonProperty("patronymic") String patronymic,
-                   @JsonProperty("number") int telNumber, @JsonProperty("year") int birthYear, @JsonProperty("marks") HashMap<Subject, Integer> subjects) {
+                   @JsonProperty("number") long telNumber, @JsonProperty("year") int birthYear, @JsonProperty("marks") HashMap<Subject, Integer> subjects) {
         this.year = birthYear;
         this.surname = surname;
         this.name = name;
@@ -23,22 +27,22 @@ public class Student extends Person {
 
     public Student(String student) throws DataExceptions {
         String[] fields = student.split(";");
-        /*if(!FunctionHelper.isInt(fields[3]) || !FunctionHelper.isInt(fields[4])){
-            throw new DataExceptions("NotANumber");
+        /*if(!LabUtils.FunctionHelper.isInt(fields[3]) || !LabUtils.FunctionHelper.isInt(fields[4])){
+            throw new LabUtils.DataExceptions("NotANumber");
         }
         for(int i = 5;i < fields.length - 1;i++){
-            //if(!Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !FunctionHelper.isInt(fields[i + 1])){
-                if(!Subject.isSubject(fields[i].toUpperCase(Locale.ROOT))){
-                    throw new DataExceptions("NotASubject");
+            //if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !LabUtils.FunctionHelper.isInt(fields[i + 1])){
+                if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT))){
+                    throw new LabUtils.DataExceptions("NotASubject");
                 }
-                if(!FunctionHelper.isInt(fields[i + 1])){
-                    throw new DataExceptions("NotANumber");
+                if(!LabUtils.FunctionHelper.isInt(fields[i + 1])){
+                    throw new LabUtils.DataExceptions("NotANumber");
                 }
             //}
             i = i + 1;
         }*/
         /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0){
-            throw new DataExceptions("OutOfData");
+            throw new LabUtils.DataExceptions("OutOfData");
         }*/
         String msg = isCorrect(fields);
         if (!msg.equals("correct")) {
@@ -47,7 +51,7 @@ public class Student extends Person {
         this.surname = fields[0];
         this.name = fields[1];
         this.patronymic = fields[2];
-        this.number = Integer.parseInt(fields[3]);
+        this.number = Long.parseLong(fields[3]);
         this.year = Integer.parseInt(fields[4]);
         for (int i = 5; i < fields.length - 1; i++) {
             marks.put(Subject.value(fields[i].toUpperCase(Locale.ROOT)), Integer.parseInt(fields[i + 1]));
@@ -88,21 +92,28 @@ public class Student extends Person {
     }
 
     private String isCorrect(String[] fields) {
-        if (!FunctionHelper.isInt(fields[3])) {
-            return fields[3] + "- NotANumber";
+        if(fields.length < 7){
+            return "WrongData";
         }
-        if(!FunctionHelper.isInt(fields[4])){
-            return fields[4] + "- NotANumber";
+        if (!FunctionHelper.isLong(fields[3])) {
+            return fields[3] + "- NotATelNumber";
+        }
+        if (!FunctionHelper.isInt(fields[4])) {
+            return fields[4] + "- NotAYear";
+        }
+        if (Long.parseLong(fields[3]) <= 0) {
+            return fields[3] + "- NotATelNumber";
+        }
+        if (Long.parseLong(fields[4]) <= 0) {
+            return fields[4] + "- NotAYear";
         }
         for (int i = 5; i < fields.length - 1; i++) {
-            //if(!Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !FunctionHelper.isInt(fields[i + 1])){
             if (!Subject.isSubject(fields[i].toUpperCase(Locale.ROOT))) {
                 return fields[i] + "- NotASubject";
             }
             if (!FunctionHelper.isInt(fields[i + 1])) {
                 return fields[i + 1] + "- NotANumber";
             }
-            //}
             i = i + 1;
         }
         return "correct";

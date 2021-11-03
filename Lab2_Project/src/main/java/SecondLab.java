@@ -1,5 +1,9 @@
+import DAOClasses.PeopleService;
+import DataThreads.Controller;
+import DataThreads.Dispathcher;
+import LabUtils.DataQueue;
+
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class SecondLab {
@@ -9,10 +13,9 @@ public class SecondLab {
         File dataFolder = new File("C:\\Users\\devsy\\IdeaProjects\\Lab2_Project\\FolderWithDataFiles");
         PeopleService pService;
         Scanner scan = new Scanner(System.in);
-
         /*do {
             System.out.println("Укажите путь для папки:");
-            String path = FunctionHelper.readLine(scan);
+            String path = LabUtils.FunctionHelper.readLine(scan);
             if(path == null){
                 System.out.println("Завершение работы");
                 return;
@@ -22,14 +25,10 @@ public class SecondLab {
                 System.out.println("Это не папка или такой папки нет");
             }
         }while(!folder.exists() || (folder.exists() && !folder.isDirectory()));*/
-        //try {
         pService = new PeopleService(scan, dataFolder);
-        /*} catch (IOException e) {
-            e.printStackTrace();
-        }*/
         DataQueue<String> queue = new DataQueue<>();
-        Controller controller = new Controller(manageFolder, queue, scan);
         Dispathcher dispathcher = new Dispathcher(queue, pService, errorFolder);
+        Controller controller = new Controller(manageFolder, queue, scan, dispathcher);
         controller.start();
         try {
             controller.sleep(1L);
@@ -37,18 +36,15 @@ public class SecondLab {
             e.printStackTrace();
         }
         dispathcher.start();
-        /*if (!controller.isAlive()) {
-            dispathcher.doStop();
-        }*/
-        if (dispathcher.isAlive() && !controller.isAlive()) {
-            dispathcher.doStop();
+        while (dispathcher.isAlive()) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+
+            }
+        }
+        if (!dispathcher.isAlive() && !controller.isAlive()) {
             scan.close();
         }
-        /*if(!controller.isAlive()){
-                dispathcher.doStop(true);
-            }
-            if(!controller.isAlive() || !dispathcher.isAlive()) {
-                scan.close();
-            }*/
     }
 }

@@ -1,15 +1,18 @@
+package DataThreads;
+
+import DAOClasses.PeopleService;
+import LabUtils.DataQueue;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.nio.file.*;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class Dispathcher extends Thread {
     private DataQueue<String> queue;
     private PeopleService pService;
-    private DState state = DState.NONE;
     private boolean stop = false;
+    private boolean interrupted = false;
     private String[] msgs = {"0.Нет", "1.Да"};
     private File errorFolder;
 
@@ -49,6 +52,28 @@ public class Dispathcher extends Thread {
         return !stop;
     }
 
+   private void doCommands(int n) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException {
+        String name;
+       for (int i = 0; i < n; i++) {
+           name = queue.poll();
+           if (checkString(name)) {
+               System.out.println("Команда :" + name.split(" ")[0]);
+               InvokeMethods(pService, name);
+           }
+       }
+   }
+
+   private void moveFile(BufferedWriter buffer,String fPath,File file,Exception e) throws IOException {
+       buffer.newLine();
+       e.getCause().printStackTrace(new PrintWriter(buffer));
+       buffer.close();
+       File errorFile = new File(errorFolder.getPath() + "\\" + file.getName());
+       if (errorFile.exists()) {
+           errorFile.delete();
+       }
+       Files.move(Path.of(fPath), Path.of(errorFolder.getPath() + "\\" + file.getName()));
+   }
+
     @Override
     public void run() {
         int n;
@@ -56,58 +81,32 @@ public class Dispathcher extends Thread {
         File file = null;
         String fPath = "";
         while (true) {
-            state = DState.NONE;
             try {
                 if (!keepRunning()) {
-                    System.out.println("Файлов управления нет");
+                    System.out.println("Файлов управления нет.Завершение прроограммы");
                     return;
                 }
-                String name;
+                n = Integer.parseInt(queue.poll());
                 fPath = queue.poll();
                 file = new File(fPath);
                 buffer = new BufferedWriter(new FileWriter(fPath, true));
-                n = queue.getLimit() - 1;
-                System.out.println("n = " + n);
-                for (int i = 0; i < n; i++) {
-                    name = queue.poll();
-                    if (checkString(name)) {
-                        System.out.println("Команда :" + name.split(" ")[0]);
-                        state = DState.getValue(InvokeMethods(pService, name));
-                        while (state != DState.WORK) {
-                            wait();
-                        }
-                    }
-                }
+                doCommands(n);
                 buffer.close();
                 file.delete();
                 TimeUnit.SECONDS.sleep(1L);
                 if (queue.size() == 0) {
-                    System.out.println("Файлов управления нет");
+                    System.out.println("Файлов управления нет.Завершение прроограммы");
+                    stop = true;
                     return;
                 }
             } catch (Exception e) {
                 try {
-                    buffer.newLine();
-                    e.getCause().printStackTrace(new PrintWriter(buffer));
-                    buffer.close();
-                    File errorFile = new File(errorFolder.getPath() + "\\" + file.getName());
-                    if (errorFile.exists()) {
-                        errorFile.delete();
-                    }
-                    Files.move(Path.of(fPath), Path.of(errorFolder.getPath() + "\\" + file.getName()));
+                    moveFile(buffer,fPath,file,e);
                 } catch (Exception ex) {
                 }
+                pService.out("Ошибка в файле: " + file.getName());
                 return;
             }
-        }
-    }
-
-    enum DState {
-        WORK,
-        NONE;
-
-        public static DState getValue(boolean b) {
-            return WORK;
         }
     }
 }
