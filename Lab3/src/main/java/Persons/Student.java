@@ -28,6 +28,23 @@ public class Student extends Person {
 
     public Student(String student) throws DataExceptions {
         String[] fields = student.split(";");
+        /*if(!LabUtils.FunctionHelper.isInt(fields[3]) || !LabUtils.FunctionHelper.isInt(fields[4])){
+            throw new LabUtils.DataExceptions("NotANumber");
+        }
+        for(int i = 5;i < fields.length - 1;i++){
+            //if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !LabUtils.FunctionHelper.isInt(fields[i + 1])){
+                if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT))){
+                    throw new LabUtils.DataExceptions("NotASubject");
+                }
+                if(!LabUtils.FunctionHelper.isInt(fields[i + 1])){
+                    throw new LabUtils.DataExceptions("NotANumber");
+                }
+            //}
+            i = i + 1;
+        }*/
+        /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0){
+            throw new LabUtils.DataExceptions("OutOfData");
+        }*/
         String msg = isCorrect(fields);
         if (!msg.equals("correct")) {
             throw new DataExceptions(msg);

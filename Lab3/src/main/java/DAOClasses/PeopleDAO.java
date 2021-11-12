@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Scanner;
 
 public class PeopleDAO implements DAO {
     private File folder;
@@ -286,7 +285,7 @@ public class PeopleDAO implements DAO {
                 return false;
             }
         }*/
-return true;
+        return true;
     }
 
     @Override

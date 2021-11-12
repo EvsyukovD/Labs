@@ -12,6 +12,8 @@ public class Dispathcher extends Thread {
     private DataQueue<String> queue;
     private PeopleService pService;
     private boolean stop = false;
+    private boolean interrupted = false;
+    private String[] msgs = {"0.Нет", "1.Да"};
     private File errorFolder;
 
     public Dispathcher(DataQueue<String> queue, PeopleService pService, File errorFolder) {
@@ -24,7 +26,7 @@ public class Dispathcher extends Thread {
         return s.startsWith("update") || s.startsWith("createPerson") || s.startsWith("deletePerson") || s.startsWith("find");
     }
 
-    private boolean InvokeMethods(PeopleService pService, String str) throws Exception {
+    private boolean InvokeMethods(PeopleService pService, String str) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String name = str.split(" ")[0];
         String id = str.split(" ")[1];
         if (name.equals("deletePerson") || name.equals("find")) {
@@ -50,11 +52,12 @@ public class Dispathcher extends Thread {
         return !stop;
     }
 
-   private void doCommands(int n) throws Exception {
+   private void doCommands(int n) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, InterruptedException {
         String name;
        for (int i = 0; i < n; i++) {
            name = queue.poll();
            if (checkString(name)) {
+               System.out.println("Команда :" + name.split(" ")[0]);
                InvokeMethods(pService, name);
            }
        }
@@ -80,7 +83,7 @@ public class Dispathcher extends Thread {
         while (true) {
             try {
                 if (!keepRunning()) {
-                    //Файлов управления нет.Завершение прроограммы
+                    System.out.println("Файлов управления нет.Завершение прроограммы");
                     return;
                 }
                 n = Integer.parseInt(queue.poll());
@@ -92,7 +95,7 @@ public class Dispathcher extends Thread {
                 file.delete();
                 TimeUnit.SECONDS.sleep(1L);
                 if (queue.size() == 0) {
-                    //Файлов управления нет.Завершение прроограммы
+                    System.out.println("Файлов управления нет.Завершение прроограммы");
                     stop = true;
                     return;
                 }

@@ -15,14 +15,14 @@ public class Controller extends Thread {
     private File folder;
     private DataQueue<String> queue;
     private boolean stop = false;
-    private boolean noFiles = false;
     private File bufFolder = new File("C:\\Users\\devsy\\IdeaProjects\\Lab2_Project\\BufferFolder");
-    private String[] msgs = {"0.Нет", "1.Да"};
+    private Scanner scan;
     private Dispathcher disp;
 
-    public Controller(File folder, DataQueue<String> queue, Dispathcher dispathcher) {
+    public Controller(File folder, DataQueue<String> queue, Scanner scn, Dispathcher dispathcher) {
         this.queue = queue;
         this.folder = folder;
+        this.scan = scn;
         this.disp = dispathcher;
     }
 

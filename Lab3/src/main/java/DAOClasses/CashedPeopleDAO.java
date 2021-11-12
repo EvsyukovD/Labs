@@ -9,16 +9,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CashedPeopleDAO implements DAO {
-    private final File folder;
+    //private final File folder;
     private Map<String, String> map = new HashMap<>();
     private File output;
 
-    public CashedPeopleDAO(File folder, File output) throws IOException {
-        this.folder = folder;
+    public CashedPeopleDAO(File output) {
+        //this.folder = folder;
         this.output = output;
-        File[] files = folder.listFiles();
+        /*File[] files = folder.listFiles();
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".json")) {
                 if (file.getName().charAt(0) == 't') {
@@ -30,7 +31,7 @@ public class CashedPeopleDAO implements DAO {
                     map.put("s" + s.getName(), s.getStringStudent());
                 }
             }
-        }
+        }*/
     }
 
     public void out(String msg) {
@@ -44,15 +45,33 @@ public class CashedPeopleDAO implements DAO {
     }
 
     @Override
-    public boolean createPerson(String id, String data) {
-        return true;
+    public boolean createPerson(String id, String data) throws DataExceptions {
+        if (id.charAt(0) == 't') {
+            Teacher teacher = new Teacher(data);
+            map.put("t" + teacher.getName(), teacher.getStringTeacher());
+            //teacher.writeToFile(new File(folder.getPath() + "\\t" + teacher.getName() + ".json"));
+            out("createPerson " + id + " " + data + " -персона создана");
+            return true;
+        }
+        if (id.charAt(0) == 's') {
+            Student student = new Student(data);
+            map.put("s" + student.getName(), student.getStringStudent());
+            //student.writeToFile(new File(folder.getPath() + "\\s" + student.getName() + ".json"));
+            out("createPerson " + id + " " + data + " -персона создана");
+            return true;
+        }
+        if (!id.startsWith("t") && !id.startsWith("s")) {
+            out("createPerson " + id + " " + data + " -неправильный идентификатор");
+            throw new DataExceptions(id + "-WrongTypeOfPerson");
+        }
+        return false;
     }
 
     @Override
     public boolean deletePerson(String id) throws DataExceptions {
         if (map.containsKey(id)) {
-            File file = new File(folder.getPath() +"\\" + id + ".json");
-            file.delete();
+            //File file = new File(folder.getPath() + "\\" + id + ".json");
+            //file.delete();
             map.remove(id);
             out("deletePerson: " + id + " - персона удалена");
             return true;
@@ -68,8 +87,8 @@ public class CashedPeopleDAO implements DAO {
                 invoke(teacher, data);
         map.remove(id);
         map.put("t" + teacher.getName(), teacher.getStringTeacher());
-        File file = new File(folder.getPath() + "\\t" + teacher.getName() + ".json");
-        teacher.writeToFile(file);
+        //File file = new File(folder.getPath() + "\\t" + teacher.getName() + ".json");
+        //teacher.writeToFile(file);
     }
 
     public void updateStudent(Student student, String field, String name, String data) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, DataExceptions, IOException {
@@ -83,8 +102,8 @@ public class CashedPeopleDAO implements DAO {
         }
         map.remove(id);
         map.put("s" + student.getName(), student.getStringStudent());
-        File file = new File(folder.getPath() + "\\s" + student.getName() + ".json");
-        student.writeToFile(file);
+        //File file = new File(folder.getPath() + "\\s" + student.getName() + ".json");
+        //student.writeToFile(file);
     }
 
     @Override
@@ -105,8 +124,8 @@ public class CashedPeopleDAO implements DAO {
                 out(student.getStringStudent());
             }
         } else {
-            out("update: " + id + " "+ field + " " + data + "- такой персоны нет или ошибка в данных");
-            throw new DataExceptions(id + " "+ field + " " + data +"-PersonDoesNotExistOrErrorData");
+            out("update: " + id + " " + field + " " + data + "- такой персоны нет или ошибка в данных");
+            throw new DataExceptions(id + " " + field + " " + data + "-PersonDoesNotExistOrErrorData");
         }
         return true;
     }

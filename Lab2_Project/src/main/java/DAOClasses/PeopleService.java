@@ -8,14 +8,10 @@ import java.util.LinkedList;
 import java.util.Scanner;
 
 public class PeopleService implements DAO {
-    private PeopleDAO pDao;
-    private CashedPeopleDAO cDao;
-    public Scanner scn;
     private File folder;
     private final File output = new File("C:\\Users\\devsy\\IdeaProjects\\Lab2_Project\\PeopleService\\output.txt");
 
-    public PeopleService(Scanner scan, File fldr) {
-        scn = scan;
+    public PeopleService(File fldr) {
         folder = fldr;
         try {
             PrintWriter wr = new PrintWriter(output);
@@ -36,25 +32,25 @@ public class PeopleService implements DAO {
 
     @Override
     public boolean createPerson(String id, String data) throws IOException, DataExceptions {
-        PeopleDAO pDao = new PeopleDAO(scn, folder,output);
+        PeopleDAO pDao = new PeopleDAO(folder,output);
         return pDao.createPerson(id, data);
     }
 
     @Override
     public boolean deletePerson(String id) throws IOException, DataExceptions {
-        CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder,output);
+        CashedPeopleDAO cDao = new CashedPeopleDAO(folder,output);
         return cDao.deletePerson(id);
     }
 
     @Override
     public boolean update(String id, String field, String data) throws IOException, DataExceptions, InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException {
-        CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder,output);
+        CashedPeopleDAO cDao = new CashedPeopleDAO(folder,output);
         return cDao.update(id, field, data);
     }
 
     @Override
     public boolean find(String id) throws IOException {
-        CashedPeopleDAO cDao = new CashedPeopleDAO(scn, folder,output);
+        CashedPeopleDAO cDao = new CashedPeopleDAO(folder,output);
         return cDao.find(id);
     }
 
