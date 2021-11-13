@@ -1,6 +1,4 @@
-package com.example.demo.LabUtils;
-
-import java.util.Scanner;
+package com.example.demo.utils;
 
 public class FunctionHelper {
     /*private static boolean hasNextIntFlag = true;

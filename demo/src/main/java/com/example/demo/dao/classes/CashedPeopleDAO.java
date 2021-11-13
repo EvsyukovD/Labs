@@ -1,4 +1,4 @@
-package com.example.demo.DAOClasses;
+package com.example.demo.dao.classes;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,29 +7,15 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import com.example.demo.Persons.*;
-import com.example.demo.LabUtils.*;
+import com.example.demo.persons.*;
+import com.example.demo.utils.*;
 
 public class CashedPeopleDAO implements DAO {
     private Map<String, String> map = new HashMap<>();
     private File output;
 
     public CashedPeopleDAO(File output)  {
-        //this.folder = folder;
         this.output = output;
-        /*File[] files = folder.listFiles();
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".json")) {
-                if (file.getName().charAt(0) == 't') {
-                    Teacher t = new Teacher(file);
-                    map.put("t" + t.getName(), t.getStringTeacher());
-                }
-                if (file.getName().charAt(0) == 's') {
-                    Student s = new Student(file);
-                    map.put("s" + s.getName(), s.getStringStudent());
-                }
-            }
-        }*/
     }
 
     public void out(String msg) {

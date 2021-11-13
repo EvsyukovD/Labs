@@ -1,13 +1,13 @@
-package com.example.demo.DAOClasses;
+package com.example.demo.dao.classes;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Scanner;
-import com.example.demo.LabUtils.DataExceptions;
-import com.example.demo.Persons.*;
+
+import com.example.demo.utils.DataExceptions;
+import com.example.demo.persons.*;
 
 public class PeopleDAO implements DAO {
     private File folder;

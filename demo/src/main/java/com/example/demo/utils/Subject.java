@@ -1,4 +1,4 @@
-package com.example.demo.LabUtils;
+package com.example.demo.utils;
 
 import java.util.Locale;
 

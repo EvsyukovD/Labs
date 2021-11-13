@@ -1,10 +1,10 @@
-package com.example.demo.DAOClasses;
+package com.example.demo.dao.classes;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import com.example.demo.LabUtils.DataExceptions;
-import com.example.demo.Persons.Person;
+import com.example.demo.utils.DataExceptions;
+import com.example.demo.persons.Person;
 
 public interface DAO {
     boolean createPerson(String id,String data) throws IOException, DataExceptions;

@@ -1,13 +1,13 @@
-package com.example.demo.Persons;
+package com.example.demo.persons;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.example.demo.LabUtils.Subject;
+import com.example.demo.utils.Subject;
 import java.io.File;
 import java.io.IOException;
-import com.example.demo.LabUtils.DataExceptions;
+import com.example.demo.utils.DataExceptions;
 public class Teacher extends Person {
     private Subject subject;
     private int start;

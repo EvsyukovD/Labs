@@ -1,6 +1,6 @@
-package com.example.demo.Persons;
-import com.example.demo.LabUtils.FunctionHelper;
-import com.example.demo.LabUtils.DataExceptions;
+package com.example.demo.persons;
+import com.example.demo.utils.FunctionHelper;
+import com.example.demo.utils.DataExceptions;
 
 public abstract class Person {
     protected String surname;

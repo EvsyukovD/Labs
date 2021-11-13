@@ -1,4 +1,4 @@
-package com.example.demo.LabUtils;
+package com.example.demo.utils;
 
 public class DataExceptions extends Exception{
     public DataExceptions(String s){

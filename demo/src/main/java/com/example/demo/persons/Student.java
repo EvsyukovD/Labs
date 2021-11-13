@@ -1,18 +1,18 @@
-package com.example.demo.Persons;
+package com.example.demo.persons;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.example.demo.LabUtils.Subject;
+import com.example.demo.utils.Subject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
-import com.example.demo.LabUtils.DataExceptions;
-import com.example.demo.LabUtils.FunctionHelper;
+import com.example.demo.utils.DataExceptions;
+import com.example.demo.utils.FunctionHelper;
 
 public class Student extends Person {
     protected HashMap<Subject, Integer> marks = new HashMap<>();

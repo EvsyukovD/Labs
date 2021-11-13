@@ -1,9 +1,9 @@
 package com.example.demo.controllers;
 
-import com.example.demo.DAOClasses.PeopleService;
-import com.example.demo.Persons.Person;
-import com.example.demo.Persons.Student;
-import com.example.demo.Persons.Teacher;
+import com.example.demo.dao.classes.PeopleService;
+import com.example.demo.persons.Person;
+import com.example.demo.persons.Student;
+import com.example.demo.persons.Teacher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,14 +1,11 @@
-package com.example.demo.DAOClasses;
+package com.example.demo.dao.classes;
 
-import com.example.demo.LabUtils.DataExceptions;
-import com.example.demo.Persons.Person;
+import com.example.demo.utils.DataExceptions;
+import com.example.demo.persons.Person;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
 
 @Service
 public class PeopleService implements DAO {
@@ -40,7 +37,6 @@ public class PeopleService implements DAO {
 
     @Override
     public boolean createPerson(String id, String data) throws DataExceptions {
-        //PeopleDAO pDao = new PeopleDAO(folder,output);
         return cDao.createPerson(id, data);
     }
 
