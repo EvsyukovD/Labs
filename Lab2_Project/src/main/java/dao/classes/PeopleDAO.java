@@ -177,36 +177,6 @@ public class PeopleDAO implements DAO {
 
     @Override
     public boolean find(String id) {
-        /*System.out.println("Кого вы хотите найти:");
-        String[] msgs = {"0.Учитель", "1.Ученик"};
-        int choice = FunctionHelper.dialog(msgs, msgs.length, scan);
-        System.out.println("Укажите имя объекта");
-        String name = FunctionHelper.readLine(scan);
-        char c = choice == 0 ? 't' : 's';
-        if (hasFile(id + name)) {
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                if (c == 't') {
-                    mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-                    Teacher t = readPerson(name, true);
-                    System.out.println("Ваша персона");
-                    System.out.println(mapper.writeValueAsString(t));
-                    return true;
-                } else {
-                    Student s = readPerson(name, false);
-                    System.out.println("Ваша персона");
-                    System.out.println(mapper.writeValueAsString(s));
-                    return true;
-                }
-            } catch (IOException e) {
-                System.out.println("Ошибка чтения из файла");
-                return false;
-            }
-        } else {
-            System.out.println("Такого объекта нет");
-            return false;
-        }
-    }*/
         return true;
     }
 }

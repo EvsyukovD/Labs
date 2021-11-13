@@ -37,7 +37,6 @@ public class PeopleService implements DAO {
 
     @Override
     public boolean deletePerson(String id) throws IOException, DataExceptions {
-        //CashedPeopleDAO cDao = new CashedPeopleDAO(folder,output);
         PeopleDAO pDao = new PeopleDAO(folder,output);
         return pDao.deletePerson(id);
     }

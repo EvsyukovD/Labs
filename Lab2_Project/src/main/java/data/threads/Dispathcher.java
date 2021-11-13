@@ -79,7 +79,6 @@ public class Dispathcher extends Thread {
         while (true) {
             try {
                 if (!keepRunning()) {
-                    //Файлов управления нет.Завершение прроограммы
                     return;
                 }
                 n = Integer.parseInt(queue.poll());
@@ -91,7 +90,6 @@ public class Dispathcher extends Thread {
                 file.delete();
                 TimeUnit.SECONDS.sleep(1L);
                 if (queue.size() == 0) {
-                    //Файлов управления нет.Завершение прроограммы
                     stop = true;
                     return;
                 }
