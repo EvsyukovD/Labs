@@ -23,21 +23,6 @@ public class PersonController {
         this.service = service;
     }
 
-    /*@RequestMapping(value = "/greeting")
-    public String helloWorldController(@RequestParam(name = "name", required = false, defaultValue = "World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
-    }*/
-  /*@GetMapping(value = "/people")
-    public ResponseEntity<String> getMsg(@RequestParam(name = "name") String name){
-      String res;
-      if(name == null){
-          res = "Hello, World";
-      }else{
-          res = "Hello, " + name;
-      }
-      return new ResponseEntity<>(res, HttpStatus.OK);
-  }*/
     @PostMapping(value = "/people/teacher")
     public ResponseEntity<Teacher> createTeacher(@RequestBody Teacher teacher) {
         try {
