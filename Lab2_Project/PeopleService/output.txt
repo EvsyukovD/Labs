@@ -1,0 +1,4 @@
+find tHarry -такой персоны нет
+find tHarry -такой персоны нет
+find tHarry -такой персоны нет
+Ошибка в файле: manage4.txt
