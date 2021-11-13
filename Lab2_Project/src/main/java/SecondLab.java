@@ -1,10 +1,9 @@
-import DAOClasses.PeopleService;
-import DataThreads.Controller;
-import DataThreads.Dispathcher;
-import LabUtils.DataQueue;
+import dao.classes.PeopleService;
+import data.threads.Controller;
+import data.threads.Dispathcher;
+import utils.DataQueue;
 
 import java.io.File;
-import java.util.*;
 
 public class SecondLab {
     public static void main(String args[]) {
@@ -30,7 +29,6 @@ public class SecondLab {
 
             }
         }
-        if (!dispathcher.isAlive() && !controller.isAlive()) {
-        }
+        pService.out("Завершение программы");
     }
 }
