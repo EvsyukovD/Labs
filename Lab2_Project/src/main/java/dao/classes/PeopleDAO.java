@@ -1,12 +1,10 @@
 package dao.classes;
 
 import utils.DataExceptions;
-import persons.Person;
 import persons.Student;
 import persons.Teacher;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 
 public class PeopleDAO implements DAO {
     private File folder;
@@ -40,20 +38,6 @@ public class PeopleDAO implements DAO {
         }
     }
 
-    private <T extends Person> T readPerson(String name, boolean isTeacher) throws IOException {
-        if (isTeacher) {
-            return (T) new Teacher(new File(folder.getPath() + "\\" + "t" + name + ".json"));
-        } else {
-            return (T) (new Student(new File(folder.getPath() + "\\" + "s" + name + ".json")));
-        }
-    }
-
-    public void updateTeacher(String name) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NumberFormatException, InstantiationException {
-    }
-
-    public void updateStudent(String name) throws IOException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, DataExceptions {
-
-    }
 
     @Override
     public boolean update(String id, String field, String data) {
