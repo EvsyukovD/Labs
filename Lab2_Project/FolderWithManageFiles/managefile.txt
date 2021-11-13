@@ -1,0 +1,3 @@
+createPerson tHarry Potter;Harry;-;94574585;2000;10;12;
+find tHarry
+update tHarry patronymic Sergeevich
