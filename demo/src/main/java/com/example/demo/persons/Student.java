@@ -122,12 +122,12 @@ public class Student extends Person {
         return "correct";
     }
 
-    public void writeToFile(File file) throws IOException, DataExceptions {
+    /*public void writeToFile(File file) throws IOException, DataExceptions {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
         Student s = new Student(this.getStringStudent());
         objectMapper.writeValue(new FileOutputStream(file), s);
-    }
+    }*/
 
     @JsonIgnore
     public String getStringStudent() {

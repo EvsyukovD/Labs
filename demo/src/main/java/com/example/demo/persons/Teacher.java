@@ -67,7 +67,6 @@ public class Teacher extends Person {
         return start;
     }
 
-
     private String isCorrect(String[] fields) throws NumberFormatException {
         if (fields.length < 8) {
             return "WrongData";
@@ -109,10 +108,10 @@ public class Teacher extends Person {
         this.subject = Subject.value(subject);
     }
 
-    public void writeToFile(File file) throws IOException {
+    /*public void writeToFile(File file) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(file, this);
-    }
+    }*/
 
     @JsonIgnore
     public String getStringTeacher() {

@@ -21,6 +21,7 @@ public abstract class Person {
         return patronymic;
     }
 
+
     public long getNumber() {
         return number;
     }
