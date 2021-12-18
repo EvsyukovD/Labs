@@ -1,5 +1,6 @@
 package com.example.lab4.persons;
 
+import com.example.lab4.utils.FunctionHelper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,6 +9,11 @@ import com.example.lab4.utils.Subject;
 import java.io.File;
 import java.io.IOException;
 import com.example.lab4.utils.DataExceptions;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 public class Teacher extends Person {
     private Subject subject;
     private int start;
@@ -29,7 +35,11 @@ public class Teacher extends Person {
         this.number = telNumber;
     }
 
-    public Teacher(String teacher) throws NumberFormatException, DataExceptions {
+    public Teacher(){
+        this(null,null,null,0,0,null,0,0);
+    }
+
+    public Teacher(String teacher) throws DataExceptions {
         String[] fields = teacher.split(";");
         String msg = isCorrect(fields);
         if (!msg.equals("correct")) {
@@ -59,6 +69,15 @@ public class Teacher extends Person {
         this.number = t.number;
     }
 
+    public static Teacher createTeacher(String data){
+        if(isCorrect(data.split(";")).equals("correct")){
+            try{
+                return new Teacher(data);
+            }catch (Exception e){}
+        }
+        return null;
+    }
+
     public Subject getSubject() {
         return subject;
     }
@@ -67,20 +86,20 @@ public class Teacher extends Person {
         return start;
     }
 
-    private String isCorrect(String[] fields) throws NumberFormatException {
+    public static String isCorrect(String[] fields) throws NumberFormatException {
         if (fields.length < 8) {
             return "WrongData";
         }
-        if (Long.parseLong(fields[3]) <= 0) {
+        if (!FunctionHelper.isLong(fields[3]) || Long.parseLong(fields[3]) <= 0) {
             return fields[3] + "- WrongNumber";
         }
-        if (Integer.parseInt(fields[4]) <= 0) {
+        if (!FunctionHelper.isInt(fields[4]) || Integer.parseInt(fields[4]) <= 0) {
             return fields[4] + "- WrongYear";
         }
-        if (Integer.parseInt(fields[6]) <= 0) {
+        if (!FunctionHelper.isInt(fields[6]) || Integer.parseInt(fields[6]) <= 0) {
             return fields[6] + "- WrongStartTime";
         }
-        if (Integer.parseInt(fields[7]) <= 0) {
+        if (!FunctionHelper.isInt(fields[7]) || Integer.parseInt(fields[7]) <= 0) {
             return fields[7] + "- WrongFinishTime";
         }
         return "correct";

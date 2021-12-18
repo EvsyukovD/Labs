@@ -1,12 +1,21 @@
 package com.example.lab4.persons;
 import com.example.lab4.utils.FunctionHelper;
 import com.example.lab4.utils.DataExceptions;
+import org.hibernate.annotations.NaturalId;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.PrimaryKeyJoinColumn;
 public abstract class Person {
     protected String surname;
+
     protected String name;
+
     protected String patronymic;
+
     protected long number;
+
     protected int year;
 
     public String getSurname() {
@@ -61,4 +70,5 @@ public abstract class Person {
         }
         this.number = Long.parseLong(telNumber);
     }
+
 }

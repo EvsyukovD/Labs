@@ -8,7 +8,7 @@ import com.example.lab4.persons.Person;
 
 public interface DAO{
     boolean createPerson(String id,String data) throws IOException, DataExceptions;
-    boolean deletePerson(String id) throws DataExceptions, IOException;
-    Person update(String id,String field,String data) throws DataExceptions, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException, InstantiationException;
-    Person find(String id) throws IOException;
+    boolean deletePerson(long telNumber) throws DataExceptions, IOException;
+    Person update(long telNumber,String field,String data) throws DataExceptions, NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException, InstantiationException;
+    Person find(long telNumber) throws IOException;
 }

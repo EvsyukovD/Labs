@@ -6,12 +6,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.example.lab4.utils.Subject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
+
 import com.example.lab4.utils.DataExceptions;
 import com.example.lab4.utils.FunctionHelper;
+
+import javax.persistence.*;
 
 public class Student extends Person {
     protected HashMap<Subject, Integer> marks = new HashMap<>();
@@ -27,29 +31,12 @@ public class Student extends Person {
         marks.putAll(subjects);
     }
 
-    public Student(){
-        this(null,null,null,0,0,new HashMap<>());
+    public Student() {
+        this(null, null, null, 0, 0, new HashMap<>());
     }
 
     public Student(String student) throws DataExceptions {
         String[] fields = student.split(";");
-        /*if(!LabUtils.FunctionHelper.isInt(fields[3]) || !LabUtils.FunctionHelper.isInt(fields[4])){
-            throw new LabUtils.DataExceptions("NotANumber");
-        }
-        for(int i = 5;i < fields.length - 1;i++){
-            //if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT)) || !LabUtils.FunctionHelper.isInt(fields[i + 1])){
-                if(!LabUtils.Subject.isSubject(fields[i].toUpperCase(Locale.ROOT))){
-                    throw new LabUtils.DataExceptions("NotASubject");
-                }
-                if(!LabUtils.FunctionHelper.isInt(fields[i + 1])){
-                    throw new LabUtils.DataExceptions("NotANumber");
-                }
-            //}
-            i = i + 1;
-        }*/
-        /*if(Long.parseLong(fields[3]) <= 0 || Integer.parseInt(fields[4]) <= 0){
-            throw new LabUtils.DataExceptions("OutOfData");
-        }*/
         String msg = isCorrect(fields);
         if (!msg.equals("correct")) {
             throw new DataExceptions(msg);
@@ -63,6 +50,15 @@ public class Student extends Person {
             marks.put(Subject.value(fields[i].toUpperCase(Locale.ROOT)), Integer.parseInt(fields[i + 1]));
             i = i + 1;
         }
+    }
+
+    public static Student createStudent(String data) {
+        if (isCorrect(data.split(";")).equals("correct")) {
+            try {
+                return new Student(data);
+            }catch (Exception e){}
+        }
+        return null;
     }
 
     public Student(File file) throws IOException {
@@ -91,13 +87,13 @@ public class Student extends Person {
 
 
     public void setMark(String mark, String subject) throws DataExceptions, NumberFormatException {
-        if (Integer.parseInt(mark) <= 0 || !Subject.isSubject(subject)) {
+        if (Integer.parseInt(mark) < 0 || !Subject.isSubject(subject)) {
             throw new DataExceptions("WrongData");
         }
         marks.put(Subject.value(subject), Integer.parseInt(mark));
     }
 
-    private String isCorrect(String[] fields) {
+    public static String isCorrect(String[] fields) {
         if (fields.length < 7) {
             return "WrongData";
         }
@@ -107,7 +103,7 @@ public class Student extends Person {
         if (!FunctionHelper.isInt(fields[4])) {
             return fields[4] + "- NotAYear";
         }
-        if (Long.parseLong(fields[3]) <= 0) {
+        if (Long.parseLong(fields[3]) < 0) {
             return fields[3] + "- NotATelNumber";
         }
         if (Long.parseLong(fields[4]) <= 0) {

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.example.demo.persons.*;
 import com.example.demo.utils.*;
@@ -13,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Level;
 public class CashedPeopleDAO implements DAO {
-    private Map<String, String> map = new HashMap<>();
+    private Map<String, String> map = new ConcurrentHashMap<>();
     private File output;
     private static final Logger LOGGER = LogManager.getLogger(CashedPeopleDAO.class);
 

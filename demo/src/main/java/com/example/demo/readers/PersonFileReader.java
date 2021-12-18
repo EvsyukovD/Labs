@@ -3,9 +3,6 @@ package com.example.demo.readers;
 import com.example.demo.persons.Person;
 import com.example.demo.persons.Student;
 import com.example.demo.persons.Teacher;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-DROP TABLE teachers_data;
-DROP TABLE teachers;
-DROP TABLE students_data;
-DROP TABLE students;
+DROP TABLE teachers_data IF EXISTS;
+DROP TABLE teachers IF EXISTS;
+DROP TABLE students_data IF EXISTS;
+DROP TABLE students IF EXISTS;
